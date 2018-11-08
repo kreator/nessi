@@ -8,7 +8,7 @@ function hexToBytes(hex) {
   return view.buffer;
 }
 
-function buf2hex(buffer) {
+function bytesToHex(buffer) {
   // buffer is an ArrayBuffer
   return Array.prototype.map
     .call(new Uint8Array(buffer), x => ("00" + x.toString(16)).slice(-2))
@@ -68,11 +68,11 @@ class SignatureController {
     let privKey = await window.crypto.subtle.exportKey("jwk", key.privateKey);
 
     let pubKey = await window.crypto.subtle.exportKey("spki", key.publicKey);
-    return [privKey, buf2hex(pubKey)];
+    return [privKey, bytesToHex(pubKey)];
   }
 
   exportPub() {
-    return window.crypto.subtle.exportKey("spki", this.pubKey).then(buf2hex);
+    return window.crypto.subtle.exportKey("spki", this.pubKey).then(bytesToHex);
   }
 
   sign(data) {
@@ -85,7 +85,7 @@ class SignatureController {
         this.privKey,
         data
       )
-      .then(buf2hex);
+      .then(bytesToHex);
   }
 
   verifySelf(data, signature) {
