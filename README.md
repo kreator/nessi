@@ -1,2 +1,2 @@
 # nessi
-Networked Self Sovrign Identity
+NEtworked Self Sovereign Identity
