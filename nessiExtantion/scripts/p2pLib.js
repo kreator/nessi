@@ -30,14 +30,14 @@ var conn = "";
 
 function createPeer(userId) {
     var peer = new Peer(userId);
-    peer.on('connection', function(conn) {
-        //console.log("established connection");
+    // peer.on('connection', function(conn) {
+    //     //console.log("established connection");
         
-        conn.on('data', function(data){
-            console.log(data);
+    //     conn.on('data', function(data){
+    //         console.log(data);
 
-        });
-    });
+    //     });
+    // });
     return peer;
 }
 
@@ -51,30 +51,30 @@ function createConnection(localPeer, remotePeerId) {
     return conn;
 }
 
-function setRemotePeerId(e) {
-    e.preventDefault();
-    remotePeerId = $("#connectTo").val();
-    $("#connect").show();
-}
+// function setRemotePeerId(e) {
+//     e.preventDefault();
+//     remotePeerId = $("#connectTo").val();
+//     $("#connect").show();
+// }
 
-function connect(e) {
-    e.preventDefault();
-    //debugger;
-    if (userId != "") {
-        if ( remotePeerId != ""){
-            debugger;
-            conn = peer.connect(remotePeerId);
-            console.log("created connection object");
-            // on open will be launch when you successfully connect to PeerServer
-            conn.on('open', function(){
-                // here you have conn.id
-                //conn.send('hi!');
-                $("#sendform").show();
-             });    
-        }
+// function connect(e) {
+//     e.preventDefault();
+//     //debugger;
+//     if (userId != "") {
+//         if ( remotePeerId != ""){
+//             debugger;
+//             conn = peer.connect(remotePeerId);
+//             console.log("created connection object");
+//             // on open will be launch when you successfully connect to PeerServer
+//             conn.on('open', function(){
+//                 // here you have conn.id
+//                 //conn.send('hi!');
+//                 $("#sendform").show();
+//              });    
+//         }
                
-    }
-}
+//     }
+// }
 
 function sendMessage(connection, message_obj) {
     connection.send(JSON.stringify(message_obj));
