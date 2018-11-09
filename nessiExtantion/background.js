@@ -1,7 +1,7 @@
 var peer;
 var nessiSession;
 chrome.storage.sync.get(["keys"], function(result) {
-  peer = createPeer("AviK");
+  peer = createPeer("NatalyShv");
   peer.on("connection", function(conn) {
     //console.log("established connection");
     nessiSession = new NessiSession(conn, peer, conn.peer);
