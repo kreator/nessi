@@ -15,17 +15,22 @@ var messageTypes = {
 };
 
 class NessiSession {
+
   constructor(connection, localPeer, remotePeer) {
     this.conn = connection;
     this.localPeer = localPeer;
-    this.remotePeer = remotePeer;
+    this.remotePeerId = remotePeerId;
     this.localPeer.on("connection", function(conn) {
       //console.log("established connection");
-      this.remotePeer = conn.peer;
+      this.remotePeerId = conn.peer;
       conn.on("data", function(data) {
         this.receiveMessage(data);
       });
     });
+  }
+
+  setRemotePeerId(_remotePeerId) {
+    this.remotePeerId = _remotePeerId;
   }
 
   receiveMessage(msg) {
