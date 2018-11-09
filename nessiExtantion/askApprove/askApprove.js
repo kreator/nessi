@@ -6,10 +6,8 @@ document.getElementById("specImg").innerHTML += "<img src='../images/" + window.
 let approve = document.getElementById('approve');
 
 approve.onclick = function(element) {
-  chrome.storage.sync.set({approve: 'nataly'}, function() {
-    console.log('The approve is nataly.');
-  });
-
+  nessiSession.sendSignedCertificate(window.certificate_type);
+  
   window.close();
 };
 

@@ -1,3 +1,9 @@
+var peer;
+var nessiSession;
+chrome.storage.sync.get(["keys"], function(result) {
+  peer = createPeer("NatalyShv");
+});
+
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     console.log(sender.tab ?
@@ -7,6 +13,9 @@ chrome.runtime.onMessage.addListener(
     {
       var win = window.open("approve/approveIdentity.html", "extension_popup", "width=180,height=220,status=no,scrollbars=yes,resizable=no");
       win.certificate_type = request.certificate_type;
+      var conn = createConnection(peer, request.certificate_type);
+      nessiSession = new NessiSession(conn, peer, request.certificate_type);
+
       sendResponse({farewell: "goodbye"});
     }
     if (request.message_type == "NESSI-REQUEST")
