@@ -10,46 +10,54 @@ sig tree is expecting a tree that looks like:
 */
 
 class SigTree {
-  constructor(sigController, tree) {
+  constructor(sigController, tree, certificate) {
     this.sigController = sigController;
     this.tree = tree;
     this.processedKeys = [];
-    this.validation = true;
+    this.certificate = certificate;
   }
 
-  async validateBranch(signerHex, certificate, finalTarget) {
-    if (!this.validation) {
-      return false;
-    }
+  async validateBranch(signerHex, finalTarget) {
     if (this.processedKeys.includes(signerHex)) {
       return true;
     }
     let recipients = this.tree[signerHex];
     let signer = hexToBytes(signerHex);
     let subBranches = await Promise.all(
-      recipients.map(recipient => {
-        let data = await hashData(certificate + recipient[0]);
+      recipients.map(async recipient => {
+        let data = await hashData(this.certificate + recipient[0]);
         let signature = hexToBytes(recipient[0]);
         let signatureValid = await SignatureController.verifyElse(
           data,
           signature,
           signer
         );
+        debugger;
         if (!signatureValid) {
-          this.validation = false;
+          
+          console.log(signerHex, recipient[0], recipient[1])
+          return false;
         } else {
-          await this.validateBranch(recipient[0], certificate, finalTarget);
+          if (recipient[0] === finalTarget) {
+            return true;
+          }
+          return await this.validateBranch(
+            recipient[0],
+            this.certificate,
+            finalTarget
+          );
         }
       })
     );
+   // debugger;
     return !subBranches.includes(false);
   }
 
   // Verifies that the tree attached to a signed certificate is valid, used when receiving a new certificat
-  async validateReceivedCertificate(certificate, signerHex, signatureHex) {
+  async validateReceivedCertificate(signerHex, signatureHex) {
     // First verify the certificate
     let thisKeyHex = await this.sigController.exportPub();
-    let data = await hashData(certificate + thisKeyHex);
+    let data = await hashData(this.certificate + thisKeyHex);
     let signer = hexToBytes(signerHex);
     let signature = hexToBytes(signatureHex);
     let signatureValid = await SignatureController.verifyElse(
@@ -60,16 +68,11 @@ class SigTree {
 
     if (signatureValid) {
       let signers = Object.keys(this.tree);
-      for (i = 0; i < signers.length; i++) {
+      for (let i = 0; i < signers.length; i++) {
         if (this.processedKeys.includes(signers[i])) {
           continue;
         }
-        let validBranch = await this.validateBranch(
-          signers[i],
-          this.tree[signers[i]],
-          certificate,
-          signerHex
-        );
+        let validBranch = await this.validateBranch(signers[i], signerHex);
         if (!validBranch) {
           return false;
         }
@@ -77,6 +80,12 @@ class SigTree {
       return true;
     } else {
       return false;
+    }
+  }
+
+  addSig(signerHex, receiver, signatureHex) {
+    if (!this.tree[signerHex].includes([receiver, signatureHex])) {
+      this.tree[signerHex].push([receiver, signatureHex]);
     }
   }
 

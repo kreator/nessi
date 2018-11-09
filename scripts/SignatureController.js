@@ -23,7 +23,6 @@ function hashData(str) {
     new TextEncoder().encode(str)
   );
 }
-const TEST_CERT = "HUMAN:MALE:NICE";
 
 class SignatureController {
   constructor(privKey, pubKey) {
@@ -123,28 +122,3 @@ class SignatureController {
     );
   }
 }
-
-var sigCont;
-var pubKey;
-var sig;
-
-SignatureController.generateKeys()
-  .then(keys =>
-    SignatureController.importKeys(keys[0], keys[1]).then(co => {
-      sigCont = co;
-    })
-  )
-  .then(() => {
-    sigCont
-      .exportPub()
-      .then(pub => {
-        pubKey = pub;
-      })
-      .then(() => {
-        hashData(TEST_CERT + pubKey).then(hash =>
-          sigCont.sign(hash).then(sign => {
-            sig = sign;
-          })
-        );
-      });
-  });
