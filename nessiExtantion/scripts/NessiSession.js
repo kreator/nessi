@@ -22,6 +22,9 @@ class NessiSession {
 		this.localPeer.on('connection', function(conn) {
         //console.log("established connection");
         	this.remotePeer = conn.peer;
+        	conn.on('data', function(data){
+        		this.receiveMessage(data);
+        	});
 	    });
 	}
 
@@ -162,7 +165,7 @@ class NessiSession {
 	sendVerification(certificate) {
 	  chrome.storage.sync.get(["keys", "sigTree"], function(result) {
 	    sendMessage({
-	    		messageType: messageTypes.APPROVE_VERIFICATION
+	    		messageType: messageTypes.APPROVE_VERIFICATION,
 				messagData: {
 					signatureTree: result.sigTree[certificate],
 			      	prover: result.keys.pubKey,
