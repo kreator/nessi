@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title>GTmetrix Analyzer</title>
+    <script src="popup.js"></script>
+    <style>
+      img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    }
+    h2{
+      color:#CC0303;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+    }
+    span{
+      color:#323232;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      font-size:15px;
+    }
+    .spanCol{
+      column-count: 1;
+      column-gap: 10px;
+    }
+    .smallText{
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      font-size:10px;
+      padding: 13px
+    }
+    </style>
+  </head>
+  <body>
+    <div style="width:180px" align="center" >
+      <div style="border-bottom: 1px solid #ddd;">
+        <h2>Nessi</h2>
+      </div>
+      <div id="specText" style="border-bottom: 1px solid #ddd; padding: 23px">
+      </div>
+      <div id="specImg" class="spanCol" style="border-bottom: 1px solid #ddd; padding: 4px">
+      </div>
+      <div style="padding: 14px">
+          <button id="decline" style="background-color:white; color: #48BCFF; border: none ; border-radius: 8px;">Decline</button>
+          <button id="verify" style="background-color:white; color: #48BCFF; border: none ; border-radius: 8px;">Verify</button>
+      </div>
+    </div>
+
+    <script src="verify.js"></script>
+  </body>
+</html>

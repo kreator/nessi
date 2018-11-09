@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+
+  "name": "Nessi",
+  "description": "NEtworked Self Sovereign Identity ",
+  "version": "1.0",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "options_page": "approve/approveIdentity.html",
+  "browser_action": {
+   "default_icon": "images/loch-ness-monster.png",
+   "default_popup": "homePage/homePage.html"
+  },
+  "permissions": [
+   "activeTab", "tabs", "declarativeContent", "storage"
+ ],
+ "content_scripts": [
+     {
+         "matches": [
+             "*://*/*"
+         ],
+         "js": [
+             "whatAppLis.js"
+         ],
+         "all_frames": true
+     }
+ ]
+}
