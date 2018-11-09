@@ -20,13 +20,13 @@ class NessiSession {
     this.conn = connection;
     this.localPeer = localPeer;
     this.remotePeerId = remotePeerId;
-    this.localPeer.on("connection", function(conn) {
-      //console.log("established connection");
-      this.remotePeerId = conn.peer;
-      conn.on("data", function(data) {
-        this.receiveMessage(data);
-      });
-    });
+    // this.localPeer.on("connection", function(conn) {
+    //   //console.log("established connection");
+    //   this.remotePeerId = conn.peer;
+    //   conn.on("data", function(data) {
+    //     this.receiveMessage(data);
+    //   });
+    // });
   }
 
   setRemotePeerId(_remotePeerId) {
