@@ -34,7 +34,7 @@ class NessiSession {
   }
 
   sendNessiMessage(msg_obj) {
-    sendMessage(this.conn, msg_obj);
+    this.conn.send(JSON.stringify(msg_obj));
   }
 
   parseMessage(data) {
@@ -163,7 +163,7 @@ class NessiSession {
 
   sendVerification(certificate) {
     chrome.storage.sync.get(["keys", "sigTree"], function(result) {
-      sendMessage({
+      sendNessiMessage({
         messageType: messageTypes.APPROVE_VERIFICATION,
         messagData: {
           signatureTree: result.sigTree[certificate],
