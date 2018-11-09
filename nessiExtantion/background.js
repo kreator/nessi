@@ -1,12 +1,12 @@
-var peer;
-var nessiSession;
+window.peer = {};
+window.nessiSession = {};
 chrome.storage.sync.get(["keys"], function(result) {
-  peer = createPeer("NatalyShv");
-  peer.on("connection", function(conn) {
+  window.peer = createPeer("NatalyShv");
+  window.peer.on("connection", function(conn) {
     //console.log("established connection");
-    nessiSession = new NessiSession(conn, peer, conn.peer);
+    window.nessiSession = new NessiSession(conn, window.peer, conn.peer);
     conn.on("data", function(data) {
-      nessiSession.receiveMessage(data);
+      window.nessiSession.receiveMessage(data);
     });
   });
 });

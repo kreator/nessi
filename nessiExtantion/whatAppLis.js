@@ -207,7 +207,7 @@
 		}
 
 		if (!processLastMsgOnChat && (chats.length == 0 || !chat)) {
-			console.log(new Date(), 'nothing to do now... (1)', chats.length, chat);
+			//console.log(new Date(), 'nothing to do now... (1)', chats.length, chat);
 			return goAgain(start, 3);
 		}
 
@@ -221,7 +221,7 @@
 		}
 		// avoid sending duplicate messaegs
 		if (ignoreLastMsg[title] && (ignoreLastMsg[title]) == lastMsg) {
-			console.log(new Date(), 'nothing to do now... (2)', title, lastMsg);
+			//console.log(new Date(), 'nothing to do now... (2)', title, lastMsg);
 			return goAgain(() => { start(chats, cnt + 1) }, 0.1);
 		}
 
@@ -234,7 +234,7 @@
 			sendText = `I will be talking to your Nessi in short time`;
       var certificate_type = lastMsg.slice(12);
       chrome.runtime.sendMessage({message_type: "NESSI-INIT", certificate_type: certificate_type}, function(response) {
-          console.log(response);
+          //console.log(response);
       });
     }
 
@@ -242,7 +242,7 @@
 			sendText = `checking -Nessi-`;
       var certificate_type = lastMsg.slice(15);
       chrome.runtime.sendMessage({message_type: "NESSI-REQUEST", persone_name: title ,certificate_type: certificate_type, image: "nataly_img.jpeg"}, function(response) {
-          console.log(response);
+          //console.log(response);
       });
     }
 
@@ -250,7 +250,7 @@
 			sendText = `verifing -Nessi-`;
       var certificate_type = lastMsg.slice(14);
       chrome.runtime.sendMessage({message_type: "NESSI-VERIFY", sender_persone_name: title, certificate_type: certificate_type}, function(response) {
-          console.log(response);
+          //console.log(response);
       });
 		}
 
@@ -260,11 +260,11 @@
 		// that's sad, there's not to send back...
 		if (!sendText) {
 			ignoreLastMsg[title] = lastMsg;
-			console.log(new Date(), 'new message ignored -> ', title, lastMsg);
+			//console.log(new Date(), 'new message ignored -> ', title, lastMsg);
 			return goAgain(() => { start(chats, cnt + 1) }, 0.1);
 		}
 
-		console.log(new Date(), 'new message to process, uhull -> ', title, lastMsg);
+		//console.log(new Date(), 'new message to process, uhull -> ', title, lastMsg);
 
 		// select chat and send message
 		if (!processLastMsgOnChat){

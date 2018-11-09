@@ -6,7 +6,7 @@ document.getElementById("specImg").innerHTML += "<img src='../images/" + window.
 let approve = document.getElementById('approve');
 
 approve.onclick = function(element) {
-  nessiSession.sendSignedCertificate(window.certificate_type);  
+  window.nessiSession.sendSignedCertificate(window.certificate_type);  
   window.close();
 };
 
