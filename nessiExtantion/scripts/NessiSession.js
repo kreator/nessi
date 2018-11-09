@@ -25,28 +25,28 @@ class NessiSession {
 	    });
 	}
 
-	receiveMessage: function(msg) {
+	receiveMessage(msg) {
 		var message_obj = JSON.parse(msg);
 		this.handleMessageReceive(message_obj);
 	}
 
-	sendNessiMessage: function(msg_obj) {
+	sendNessiMessage(msg_obj) {
 		sendMessage(this.conn, msg_obj);
 	}
 
-	parseMessage: function(data) {
+	parseMessage(data) {
 	  return JSON.parse(data);
 	}
 
-	getMessageType: function(msg) {
+	getMessageType(msg) {
 	  return msg.messageType;
 	}
 
-	getMessageData: function(msg) {
+	getMessageData(msg) {
 	  return msg.messageData;
 	}
 
-	 handleMessageReceive: function(msg) {
+	 handleMessageReceive(msg) {
 	  var messageType = getMessageType(msg);
 	  var messageData = getMessageData(msg);
 	  if (messageTypes.REQUEST_CERTIFICATE == messageType) {
@@ -64,7 +64,7 @@ class NessiSession {
 	  }
 	}
 
-	handleRequestCertificate: function(msgData) {
+	handleRequestCertificate(msgData) {
 	  // other peer requested client to sign his cert
 	  // show him the options and according to his answer send an approve/reject message
 	  var certificate = msgData.certificate;
@@ -76,7 +76,7 @@ class NessiSession {
 	 * Signs certificate for peer and sends it
 	 * @param {str} certificate
 	 */
-	sendSignedCertificate: function(certificate) {
+	sendSignedCertificate(certificate) {
 	  chrome.storage.sync.get(["keys", "sigTree"], function(result) {
 	    console.log(result);
 	    SignatureController.importKeys(
@@ -103,7 +103,7 @@ class NessiSession {
 	  });
 	}
 
-	handleApproveCertificate: function(msgData) {
+	handleApproveCertificate(msgData) {
 	  // someone approved my certificate
 	  approveCertificate = msgData;
 	  if (approveCertificate.approved) {
@@ -144,13 +144,13 @@ class NessiSession {
 	  }
 	}
 
-	handleRejectCertificate: function(msgData) {
+	handleRejectCertificate(msgData) {
 	  // my REQUEST_CERTIFICATE got declined. what do?
 	  // NATALY error popup?
 	  errorPopup("Signature request declined");
 	}
 
-	handleRequestCertificateVerification: function(msgData) {
+	handleRequestCertificateVerification(msgData) {
 	  // other peer sent me a {cert}. that means I need to decide if I want to prove myself to him or not
 	  // Display a (send certificate verification/ decline input box)
 	  console.log("received request certificate verification");
@@ -174,13 +174,13 @@ class NessiSession {
 	  });
 	}
 
-	handleRejectCertificateVerification: function(msgData) {
+	handleRejectCertificateVerification(msgData) {
 	  // Other peer doesnt want to prove himself to me. what do?
 	  console.log("Cretificate verification request rejected.");
 	  errorPopup("Your \"friend\" refused to identify");
 	}
 
-	handleApproveCertificateVerification: function(msgData) {
+	handleApproveCertificateVerification(msgData) {
 	  approveCertificateVerification = msgData;
 
 	  if (approveCertificateVerification.approved) {
@@ -225,12 +225,12 @@ class NessiSession {
 	}
 
 	// Get all the signatures that this user has in this certificates context
-	getSignatureTree: function(_cert) {}
+	getSignatureTree(_cert) {}
 
 	// sign on a requesters Signature
-	signCert: function(_certificate, _requresterPK) {}
+	signCert(_certificate, _requresterPK) {}
 
-	 parseSignatureTree: function(signatureTree) {
+	 parseSignatureTree(signatureTree) {
 	  return signatureTree; //placeholder
 	}
 
