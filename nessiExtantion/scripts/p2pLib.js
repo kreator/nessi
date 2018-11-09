@@ -29,7 +29,7 @@ var conn = "";
 // }
 
 function createPeer(userId) {
-    var peer = new Peer(userId, {host: 'localhost', port: 9000, path: '/'});
+    var peer = new Peer(userId);
     peer.on('connection', function(conn) {
         //console.log("established connection");
         
