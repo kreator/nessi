@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>GTmetrix Analyzer</title>
-    <script src="popup.js"></script>
     <style>
       img {
     display: block;
@@ -18,14 +17,23 @@
       font-family: "Comic Sans MS", cursive, sans-serif;
       font-size:15px;
     }
+    input{
+      width: 100px;
+    }
     </style>
   </head>
   <body>
-    <form style="width:200px" align="center">
-    <h3>Nessi</h3>
-    <span>Nessi has requested a XXXX certificate</span>
+    <div style="width:160px" align="center">
+      <div style="border-bottom: 1px solid #ddd">
+        <h3>Nessi</h3>
+      </div>
+      <div>
+        <img src="../images/warning.png">
+      </div>
+      <div id="specText" style="padding: 12px">
+      </div>
+    </div>
 
-    <img src="images/loch-ness-monster-large.png" >
-    </form>
+    <script src="errorPopup.js"></script>
   </body>
 </html>

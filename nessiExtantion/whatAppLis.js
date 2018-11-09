@@ -227,8 +227,9 @@
 
 		// what to answer back?
 		let sendText
-    //lastMsg = "@NESSI REQUEST Doctor:Family";
+    //lastMsg = "@NESSI INIT Doctor:Family";
     //title ="Dany";
+
 		if (lastMsg.toUpperCase().indexOf('@NESSI INIT') > -1){
 			sendText = `INIT`;
       var certificate_type = lastMsg.slice(12);
