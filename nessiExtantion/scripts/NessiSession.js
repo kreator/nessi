@@ -159,7 +159,7 @@ class NessiSession {
 	  requestVerificationPopup(certificate, certificateName); //NATALY
 	}
 
-	sendVerification: function(certificate) {
+	sendVerification(certificate) {
 	  chrome.storage.sync.get(["keys", "sigTree"], function(result) {
 	    sendMessage({
 	    		messageType: messageTypes.APPROVE_VERIFICATION
