@@ -52,16 +52,23 @@ function handleRequestCertificate(msgData) {
   requestCertificatePopup(certificate, certificateName); //NATALY
 }
 
+/**
+ * Signs certificate for peer and sends it
+ * @param {str} certificate
+ */
 function sendSignedCertificate(certificate) {
   chrome.storage.sync.get(["keys", "sigTree"], function(result) {
     console.log(result);
-    SignatureController.importKeys(result[0].privKey, result[0].pubKey).then(
+    SignatureController.importKeys(result["keys"].privKey, result["keys"].pubKey).then(
       sigCont => {
-        hashData(certificate + result[0]).then(hashedData =>
+        hashData(certificate + result["keys"].pubKey).then(hashedData =>
           sigCont.sign(hashedData).then(signature =>
-            sendMessage({
-              signedCertificate: signature,
-              certificateSignatureTree: result[1][certificate],
+            sendMessage(APPROVE_CERTIFICATE, {
+              //AVI
+              signerKey: result["keys"].pubKey,
+			  signedCertificate: signature,
+			  certificate: certificate,
+              signatureTree: result[0][certificate],
               approved: true
             })
           )
@@ -75,10 +82,23 @@ function handleApproveCertificate(msgData) {
   // someone approved my certificate
   approveCertificate = msgData.approveCertificate;
   if (approveCertificate.approved) {
-    var signerKey = approveCertificate.signerKey;
-    var signedCertificate = approveCertificate.signedCertificate;
-    var signatureTree = parseSignatureTree(approveCertificate.signatureTree);
-    storeSignatureTree(signatureTree);
+    // Fetch keys from storage
+    chrome.storage.sync.get(["keys", "sigTree"], function(result) {
+      SignatureController.importKeys(result["keys"].privKey, result["keys"].pubKey).then(
+        sigCont => {
+			var signatureTree = SigTree(sigCont, approveCertificate.signatureTree, approveCertificate.certificate);
+			signatureTree.validateReceivedCertificate(approveCertificate.signerKey, approveCertificate.signedCertificate).then(valid =>{
+				if(valid){
+					let oldTree = result["sigTree"];
+					oldTree[approveCertificate.certificate] = deepmerge(oldTree[approveCertificate.certificate], approveCertificate.signatureTree);
+				}
+				else{
+					errorPopup("Verifying faild") //NATALY
+ 				}
+			})
+		}
+      );
+    });
   }
 }
 
