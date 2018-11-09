@@ -227,35 +227,35 @@
 
 		// what to answer back?
 		let sendText
-    //lastMsg = "@NESSI INIT Doctor:Family";
+    //lastMsg = "@NESSI VERIFY Doctor:Family";
     //title ="Dany";
 
 		if (lastMsg.toUpperCase().indexOf('@NESSI INIT') > -1){
-			sendText = `INIT`;
+			sendText = `I will be talking to your Nessi in short time`;
       var certificate_type = lastMsg.slice(12);
       chrome.runtime.sendMessage({message_type: "NESSI-INIT", certificate_type: certificate_type}, function(response) {
           console.log(response);
       });
-      return true;
-		}
+    }
 
 		if (lastMsg.toUpperCase().indexOf('@NESSI REQUEST') > -1){
-			sendText = `REQUEST`;
+			sendText = `checking -Nessi-`;
       var certificate_type = lastMsg.slice(15);
       chrome.runtime.sendMessage({message_type: "NESSI-REQUEST", persone_name: title ,certificate_type: certificate_type, image: "nataly_img.jpeg"}, function(response) {
           console.log(response);
       });
-      return true;
-		}
+    }
 
 		if (lastMsg.toUpperCase().indexOf('@NESSI VERIFY') > -1){
-			sendText = `VERIFY`;
+			sendText = `verifing -Nessi-`;
       var certificate_type = lastMsg.slice(14);
       chrome.runtime.sendMessage({message_type: "NESSI-VERIFY", sender_persone_name: title, certificate_type: certificate_type}, function(response) {
           console.log(response);
       });
-      return true;
 		}
+
+		goAgain(() => { start(chats, cnt + 1) }, 1);
+
 
 		// that's sad, there's not to send back...
 		if (!sendText) {

@@ -65,7 +65,7 @@ function sendSignedCertificate(certificate) {
     ).then(sigCont => {
       hashData(certificate + result["keys"].pubKey).then(hashedData =>
         sigCont.sign(hashedData).then(signature =>
-          sendMessage(APPROVE_CERTIFICATE, {
+            sendMessage(APPROVE_CERTIFICATE, {
             //AVI
             signerKey: result["keys"].pubKey,
             signedCertificate: signature,
