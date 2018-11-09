@@ -57,3 +57,17 @@ var start = async () => {
 
   return tree.validateReceivedCertificate(pubKey[3], sig[0]);
 };
+
+var startVerify = async () => {
+  treejson = [0, 1, 2, 3].reduce((total, current) => {
+    if (current == 3) {
+      return total;
+    }
+    total[pubKey[current]] = [[pubKey[current + 1], sig[current + 1]]];
+    return total;
+  }, {});
+
+  tree = new SigTree(sigCont[0], treejson, TEST_CERT);
+
+  return tree.verifiyCertificateTree(pubKey[3]);
+};

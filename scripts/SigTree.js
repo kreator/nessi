@@ -13,8 +13,17 @@ class SigTree {
   constructor(sigController, tree, certificate) {
     this.sigController = sigController;
     this.tree = tree;
+    this.cleanedTree = {};
     this.processedKeys = [];
     this.certificate = certificate;
+  }
+
+  addToCleanTree(signer, recipient) {
+    if (!this.cleanedTree[signer]) {
+      this.cleanedTree[signer] = [recipient];
+    } else {
+      this.cleanedTree[signer].push(recipient);
+    }
   }
 
   async validateBranch(signerHex, finalTarget) {
@@ -36,9 +45,8 @@ class SigTree {
         if (!signatureValid) {
           return false;
         } else {
-          console.log(finalTarget);
+          this.addToCleanTree(signerHex, recipient[0]);
           if (recipient[0] == finalTarget) {
-            console.log("bab");
             return true;
           } else {
             return await this.validateBranch(recipient[0], finalTarget);
@@ -87,5 +95,9 @@ class SigTree {
   }
 
   // Verifies that the signatures in the provided tree all originiate with this one, used when verfying someones certificate
-  verifiyCertificateTree() {}
+  async verifiyCertificateTree(proverKey) {
+    let owner = await this.sigController.exportPub();
+    let validation = await this.validateBranch(owner, proverKey);
+    return validation;
+  }
 }
