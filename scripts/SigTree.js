@@ -26,30 +26,26 @@ class SigTree {
     let subBranches = await Promise.all(
       recipients.map(async recipient => {
         let data = await hashData(this.certificate + recipient[0]);
-        let signature = hexToBytes(recipient[0]);
+        let signature = hexToBytes(recipient[1]);
         let signatureValid = await SignatureController.verifyElse(
           data,
           signature,
           signer
         );
-        debugger;
+
         if (!signatureValid) {
-          
-          console.log(signerHex, recipient[0], recipient[1])
           return false;
         } else {
-          if (recipient[0] === finalTarget) {
+          console.log(finalTarget);
+          if (recipient[0] == finalTarget) {
+            console.log("bab");
             return true;
+          } else {
+            return await this.validateBranch(recipient[0], finalTarget);
           }
-          return await this.validateBranch(
-            recipient[0],
-            this.certificate,
-            finalTarget
-          );
         }
       })
     );
-   // debugger;
     return !subBranches.includes(false);
   }
 
@@ -73,6 +69,7 @@ class SigTree {
           continue;
         }
         let validBranch = await this.validateBranch(signers[i], signerHex);
+        console.log("bas");
         if (!validBranch) {
           return false;
         }
