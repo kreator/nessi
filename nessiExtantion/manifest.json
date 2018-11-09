@@ -5,7 +5,7 @@
   "description": "NEtworked Self Sovereign Identity ",
   "version": "1.0",
   "background": {
-    "scripts": ["scripts/p2pLib.js","scripts/p2pLib.js","background.js"],
+    "scripts": ["scripts/peer.min.js", "scripts/p2pLib.js","scripts/NessiSession.js","background.js"],
     "persistent": false
   },
   "options_page": "approve/approveIdentity.html",
