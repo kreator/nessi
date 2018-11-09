@@ -112,7 +112,7 @@ function handleApproveCertificate(msgData) {
               );
               chrome.storage.sync.set({ sigTree: tree });
             } else {
-              errorPopup("Verifying faild"); //NATALY
+              errorPopup("Failed to verify certificate source"); //NATALY
             }
           });
       });
@@ -123,6 +123,7 @@ function handleApproveCertificate(msgData) {
 function handleRejectCertificate(msgData) {
   // my REQUEST_CERTIFICATE got declined. what do?
   // NATALY error popup?
+  sendMessage({ approved: false });
 }
 
 function handleRequestCertificateVerification(msgData) {
@@ -148,6 +149,7 @@ function sendVerification(certificate) {
 function handleRejectCertificateVerification(msgData) {
   // Other peer doesnt want to prove himself to me. what do?
   console.log("Cretificate verification request rejected.");
+  errorPopup("Your \"friend\" refused to identify");
 }
 
 function handleApproveCertificateVerification(msgData) {
@@ -186,7 +188,7 @@ function handleApproveCertificateVerification(msgData) {
                 approveCertificateVerification.certificate
               ); //NATALY
             } else {
-              errorPopup("Verifying faild"); //NATALY
+              errorPopup("Failed to verify chain of trust"); //NATALY
             }
           });
       });
