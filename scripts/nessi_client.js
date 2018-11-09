@@ -59,22 +59,23 @@ function handleRequestCertificate(msgData) {
 function sendSignedCertificate(certificate) {
   chrome.storage.sync.get(["keys", "sigTree"], function(result) {
     console.log(result);
-    SignatureController.importKeys(result["keys"].privKey, result["keys"].pubKey).then(
-      sigCont => {
-        hashData(certificate + result["keys"].pubKey).then(hashedData =>
-          sigCont.sign(hashedData).then(signature =>
-            sendMessage(APPROVE_CERTIFICATE, {
-              //AVI
-              signerKey: result["keys"].pubKey,
-			  signedCertificate: signature,
-			  certificate: certificate,
-              signatureTree: result[0][certificate],
-              approved: true
-            })
-          )
-        );
-      }
-    );
+    SignatureController.importKeys(
+      result["keys"].privKey,
+      result["keys"].pubKey
+    ).then(sigCont => {
+      hashData(certificate + result["keys"].pubKey).then(hashedData =>
+        sigCont.sign(hashedData).then(signature =>
+          sendMessage(APPROVE_CERTIFICATE, {
+            //AVI
+            signerKey: result["keys"].pubKey,
+            signedCertificate: signature,
+            certificate: certificate,
+            signatureTree: result["sigTree"][certificate],
+            approved: true
+          })
+        )
+      );
+    });
   });
 }
 
@@ -84,32 +85,64 @@ function handleApproveCertificate(msgData) {
   if (approveCertificate.approved) {
     // Fetch keys from storage
     chrome.storage.sync.get(["keys", "sigTree"], function(result) {
-      SignatureController.importKeys(result["keys"].privKey, result["keys"].pubKey).then(
-        sigCont => {
-			var signatureTree = SigTree(sigCont, approveCertificate.signatureTree, approveCertificate.certificate);
-			signatureTree.validateReceivedCertificate(approveCertificate.signerKey, approveCertificate.signedCertificate).then(valid =>{
-				if(valid){
-					let oldTree = result["sigTree"];
-					oldTree[approveCertificate.certificate] = deepmerge(oldTree[approveCertificate.certificate], approveCertificate.signatureTree);
-				}
-				else{
-					errorPopup("Verifying faild") //NATALY
- 				}
-			})
-		}
-      );
+      // Create signer
+      SignatureController.importKeys(
+        result["keys"].privKey,
+        result["keys"].pubKey
+      ).then(sigCont => {
+        // Create tree object
+        var signatureTree = SigTree(
+          sigCont,
+          approveCertificate.signatureTree,
+          approveCertificate.certificate
+        );
+        // Verify
+        signatureTree
+          .validateReceivedCertificate(
+            approveCertificate.signerKey,
+            approveCertificate.signedCertificate
+          )
+          .then(valid => {
+            if (valid) {
+              // Store if valid
+              let tree = result["sigTree"];
+              tree[approveCertificate.certificate] = deepmerge(
+                tree[approveCertificate.certificate],
+                approveCertificate.signatureTree
+              );
+              chrome.storage.sync.set({ sigTree: tree });
+            } else {
+              errorPopup("Verifying faild"); //NATALY
+            }
+          });
+      });
     });
   }
 }
 
 function handleRejectCertificate(msgData) {
   // my REQUEST_CERTIFICATE got declined. what do?
+  // NATALY error popup?
 }
 
 function handleRequestCertificateVerification(msgData) {
   // other peer sent me a {cert}. that means I need to decide if I want to prove myself to him or not
   // Display a (send certificate verification/ decline input box)
   console.log("received request certificate verification");
+  var certificate = msgData.requestVerification.certificate;
+  var certificateName = msgData.requestVerification.certificateName;
+  requestVerificationPopup(certificate, certificateName); //NATALY
+}
+
+function sendVerification(certificate) {
+  chrome.storage.sync.get(["keys", "sigTree"], function(result) {
+    sendMessage({
+      signatureTree: result.sigTree[certificate],
+      prover: result.keys.pubKey,
+      certificate: certificate,
+      approved: true
+    }); //AVI - THIS IS A HACK FOR NOW, JUST SEND ALL THE SIG TREE AND LET THE CLIENT FILTER IT
+  });
 }
 
 function handleRejectCertificateVerification(msgData) {
@@ -121,9 +154,43 @@ function handleApproveCertificateVerification(msgData) {
   approveCertificateVerification = msgData.approveCertificateVerification;
 
   if (approveCertificateVerification.approved) {
-    var sigTree = approveCertificateVerification.signatureTree;
-    var calculatedTrust = calculateTrust(sigTree);
-    return calculateTrust;
+    chrome.storage.sync.get(["keys", "sigTree"], function(result) {
+      // Create signer
+      SignatureController.importKeys(
+        result["keys"].privKey,
+        result["keys"].pubKey
+      ).then(sigCont => {
+        // Create tree object
+        var signatureTree = SigTree(
+          sigCont,
+          approveCertificateVerification.signatureTree,
+          approveCertificateVerification.certificate
+        );
+        // Verify
+        signatureTree
+          .verifiyCertificateTree(approveCertificateVerification.prover)
+          .then(valid => {
+            if (valid) {
+              // Store if valid
+              let trustEngine = TrustEngine(
+                signatureTree.cleanedTree,
+                [result.keys.pubKey],
+                0.5,
+                0.1
+              );
+              let score = trustEngine.calculateTrustScore(
+                approveCertificateVerification.prover
+              );
+              showApprovedPopup(
+                score,
+                approveCertificateVerification.certificate
+              ); //NATALY
+            } else {
+              errorPopup("Verifying faild"); //NATALY
+            }
+          });
+      });
+    });
   }
 }
 
